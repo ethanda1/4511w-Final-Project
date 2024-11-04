@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+ \geometry{
+ letterpaper,
+ left=20mm,
+ top=20mm,
+ }
+\setlength{\headheight}{12.5pt}
+ \usepackage{titling}
+
+\title{Writing\# 3}
+\author{Eathan Dai, Ryan Smith, and Jacob Larson}
+ 
+ \usepackage{fancyhdr}
+\fancypagestyle{plain}{%  the preset of fancyhdr 
+    \fancyhf{} % clear all header and footer fields
+    \fancyhead[L]{\thetitle}
+    \fancyhead[R]{\theauthor}
+}
+\makeatletter
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 1em%
+    \begin{center}
+    {\LARGE \@title \par}
+    \vskip 1em
+    \end{center}
+  \par
+  \vskip 1em}
+\makeatother
+
+\begin{document}
+\maketitle
+
+
+\section*{Brief Description}
+This project plans to use search algorithms to consistently win the game, 2048, with an automated player. This is a sliding puzzle game where non-blank tiles have values that are powers of two. The four by four board consists of sixteen total tiles. Tiles slide in the direction of the players input Those that slide into each other and have the same value merge into a single tile with a new value equal to the sum of the previous tiles’ values. With each input from the player, a new tile is placed randomly into a blank tile location. Once all tiles on the board have a value, the game is over and the player has lost. Some versions of the game can continue endlessly so long as the failure condition previously mentioned is not met. However, the version being tested in this project will end once one of the tiles contains the value “2048”. The board’s state change after any of the possible four moves can vary significantly. This along with the random placement of new tiles leads to state changes with a large branching factor \cite{pot_milivojević_Obradović}. 
+
+\section*{Approach}
+To create an automated player for the 2048 game, we will use the expecitmax algorithm. This is a  “recursive, depth-limited tree search algorithm” that uses an evaluation function to determine the expected outcome of a move \cite{rodgers_levine2014}. Due to the randomness involved with the placement of new tiles, expecitmax will be chosen over a minimax. To avoid unnecessary searches through out the state space, we will use the following evaluation functions to prune states less likely to win.
+\begin{itemize}
+    \item Number of Potential Tile Merges: moves leading to states with more tiles merged will be weighted more.
+
+    \item Number of Tiles That Stay in the Same Location: moves that result in lower number of tile locations being updated will be weighted less.
+
+    \item Highest score: moves that result in the highest score (sum of all tiles on the board)
+    
+    \item Highest Number of Empty Tiles: prioritize moves that result in the highest number of empty tiles on the board \cite{kohler_migler_khosmood}.
+
+    \item Creating Similar Tiles: prioritize moves that create the highest number of tiles with same values. For example, two tiles with a value of 2 and three tiles with a value of 4 would result in a score of 5 for this evaluation.
+
+    \item Large Tiles on Edge: prioritize moves that lead to states with higher value tiles place along a single edge \cite{stack_optimal_alg_20248}. 
+
+    \item Monotonicity: Prioritize moves with high monotonicity. “We consider a game to have high monotonicity if the values are either non-increasing along all rows or non-decreasing along all rows and if the values are non-increasing along all columns or non-increasing along all columns, with the highest value being in one of the four corners” \cite{kohler_migler_khosmood} \cite{stack_optimal_alg_20248}. 
+
+    \item Previous Highest Recorded Score: This evaluation would require a large number of games to be played and their states to be recorded. Each state played in a game will be recorded along with the move resulting in the next state. Each state in a single game will be associated with the same score value. 
+ex) State X is the 3rd state in a series of states in one game. Record state X and the move taken to get to state X+1 and link it to the end score of that game. So states 1…X…N where N is the last game would all be associated with the final score of the game. If a higher score is awarded, reassign the assigned value.
+\end{itemize}
+
+
+
+
+
+
+
+
+\section*{Software}
+\section*{Preliminary Work}
+\section*{Evaluating Solution}
+\section*{Time Frame}
+
+
+
+
+
+\pagebreak
+\bibliographystyle{plain}
+\bibliography{writing3}
+
+\end{document}
+
