@@ -1,0 +1,53 @@
+\documentclass{article}
+\usepackage{tikz}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+ \geometry{
+ letterpaper,
+ left=20mm,
+ top=20mm,
+ }
+\setlength{\headheight}{12.5pt}
+ \usepackage{titling}
+
+ \title{Writing #3}
+\author{Jacob Larson}
+ 
+ \usepackage{fancyhdr}
+\fancypagestyle{plain}{%  the preset of fancyhdr 
+    \fancyhf{} % clear all header and footer fields
+    \fancyhead[L]{\thetitle}
+    \fancyhead[R]{\theauthor}
+}
+\makeatletter
+\def\@maketitle{%
+  \newpage
+  \null
+  \vskip 1em%
+    \begin{center}
+    {\LARGE \@title \par}
+    \vskip 1em
+    \end{center}
+  \par
+  \vskip 1em}
+\makeatother
+
+\begin{document}
+\maketitle
+
+
+\section*{Brief Descirption}
+\section*{Approach}
+\section*{Software}
+\section*{Preliminary Work}
+\section*{Evaluating Solution}
+\section*{Time Frame}
+
+
+
+
+
+
+
+\end{document}
+
