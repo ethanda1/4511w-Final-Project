@@ -12,7 +12,9 @@ class GameGrid(Frame):
 
         self.grid()
         self.master.title('2048')
-        self.master.bind("<Key>", self.key_down)
+        
+        # Needed for user input if we want it back
+        # self.master.bind("<Key>", self.key_down)
 
         self.commands = {
             c.KEY_UP: logic.up,
@@ -35,6 +37,7 @@ class GameGrid(Frame):
         self.history_matrixs = []
         self.update_grid_cells()
 
+        self.auto_play()
         self.mainloop()
 
     def init_grid(self):
@@ -82,6 +85,34 @@ class GameGrid(Frame):
                     )
         self.update_idletasks()
 
+
+    def get_random_move(self):
+            """Return a random valid move from the available commands."""
+            valid_moves = list(self.commands.keys())
+            return random.choice(valid_moves)
+
+    def make_random_move(self):
+        """Make a random move and update the grid."""
+        move_key = self.get_random_move()
+        self.matrix, done = self.commands[move_key](self.matrix)
+        if done:
+            self.matrix = logic.add_two(self.matrix)
+            # Record the last move
+            self.history_matrixs.append(self.matrix)
+            self.update_grid_cells()
+            if logic.game_state(self.matrix) == 'win':
+                self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                self.grid_cells[1][2].configure(text="Win!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+            if logic.game_state(self.matrix) == 'lose':
+                self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+
+    def auto_play(self):
+        """Automatically make a move every 1 second."""
+        self.make_random_move()
+        self.after(1000, self.auto_play)  
+        
+    # User input can be added back if needed
     def key_down(self, event):
         key = event.keysym
         print(event)
