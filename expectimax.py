@@ -12,6 +12,10 @@ CHANCE_NODE = "chance"
 
 GAME_ACTIONS = [c.KEY_UP, c.KEY_DOWN, c.KEY_LEFT, c.KEY_RIGHT]
 
+def print2048Matrix(matrix):
+    for row in matrix:
+        print(row)
+
 class ExpectimaxValue:
     def __init__(self, score, action_history: List):
         self.score = score
@@ -40,6 +44,8 @@ class Node:
     def generateChildren(self, node_type: str, heuristic):
         generated_children = []
     
+        print("\nactual matrix")
+        print2048Matrix(self.state_matrix)
         # max nodes children come from the action taken, generate a child node for each movement action
         if node_type == MAX_NODE:
             for game_action in GAME_ACTIONS:

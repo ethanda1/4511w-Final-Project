@@ -21,3 +21,12 @@ def fewest_filled_tiles(state_matrix):
             if (element == 0):
                 score += 1
     return score
+
+def moveTilesDown(state_matrix):
+    score = 0
+    for row in range(0, c.GRID_LEN):
+        for col in range(0, c.GRID_LEN):
+            score += (row * 0.1) * state_matrix[row][col]
+            
+    
+    return score
