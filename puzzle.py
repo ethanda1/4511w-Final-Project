@@ -3,7 +3,7 @@ import random
 import logic
 import constants as c
 from expectimax import ExpectimaxValue, expectimax, Node, MAX_NODE
-from heuristics import highest_score_heuristic
+from heuristics import highest_score_heuristic, fewest_filled_tiles
 
 def gen():
     return random.randint(0, c.GRID_LEN - 1)
@@ -101,6 +101,7 @@ class GameGrid(Frame):
     def make_heuristic_move(self):
         """Make a heuristic move and update the grid."""
         move_key = self.get_heuristic_move()
+        print(move_key)
         self.matrix, done = self.commands[move_key](self.matrix)
         if done:
             self.matrix = logic.add_two(self.matrix)
@@ -138,7 +139,7 @@ class GameGrid(Frame):
     def auto_play(self):
         """Automatically make a move every 1 second."""
         self.make_heuristic_move()
-        self.after(1000, self.auto_play)  
+        self.after(3000, self.auto_play)  
         
     # User input can be added back if needed
     def key_down(self, event):
@@ -172,4 +173,4 @@ class GameGrid(Frame):
 
 
 if __name__ == "__main__":
-    game_grid = GameGrid(highest_score_heuristic)
+    game_grid = GameGrid(fewest_filled_tiles)

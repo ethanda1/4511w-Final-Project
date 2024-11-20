@@ -38,7 +38,6 @@ class Node:
         return positions
     
     def generateChildren(self, node_type: str, heuristic):
-        print("GENERATECHILDREN")
         generated_children = []
     
         # max nodes children come from the action taken, generate a child node for each movement action

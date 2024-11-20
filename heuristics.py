@@ -14,4 +14,10 @@ def highest_score_heuristic(state_matrix):
     
     return score
         
-    
+def fewest_filled_tiles(state_matrix):
+    score = 0
+    for row in state_matrix:
+        for element in row:
+            if (element == 0):
+                score += 1
+    return score
