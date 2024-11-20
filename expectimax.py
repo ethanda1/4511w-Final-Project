@@ -2,6 +2,7 @@ import string
 from math import inf as infitity
 from typing import List
 
+import constants as c
 from heuristics import test_heuristic
 
 MAX_NODE = "max"
@@ -12,9 +13,32 @@ class Node:
         self.value = value                   # value from heuristic
         self.children: List[Node] = []
         self.state_matrix: List[List[int]] = None
+        self.action_history: List[str] = None
         
     def isTerminal(self) -> bool:
         return not self.children
+    
+    def generateAllPossibleCpuMoves(self):
+        positions = []  # List to store the positions of zeros
+        for row_idx, row in enumerate(self.state_matrix):
+            for col_idx, value in enumerate(row):
+                if value == 0:
+                    positions.append((row_idx, col_idx))  # Add position as a tuple
+        return positions
+    
+    def generateChildren(self, isMaxNode: bool):
+        # child nodes action history should be the same when initialized and added onto later
+        
+        
+        
+        # max nodes children come from the action taken
+        if isMaxNode:
+            self.children.extend([c.KEY_UP, c.KEY_DOWN, c.KEY_LEFT, c.KEY_RIGHT])
+        # chance nodes children come from the possible actions the cpu could take
+        else:
+            open_positions = self.generateAllPossibleCpuMoves()
+            self.children.extend(open_positions)
+        return
 
 def newMaxNode(value: float) -> Node:
     return Node(value)
@@ -22,17 +46,24 @@ def newMaxNode(value: float) -> Node:
 def newChanceNode() -> Node:
     return Node(0)
 
-def expectimax(node: Node, node_type:string, heuristic_evaluation):    
-    # Debugging output
-    if node.value:
-        print(f"Node value: {node.value}, Node type: {node_type}")
+# need this to also return history of moves, how to record history of move, {score, {move 1, move2, ... , moveN}}
+# depthlimit must be even number
+def expectimax(node: Node, node_type:str, heuristic_evaluation, current_depth: int, depth_limit:int=2):    
+    if not(depth_limit % 2 == 0):
+        print("depth_limit must be even")
+        return
+    
+    #generate children nodes, breaks isTerminal, needs depth limit
+    node.generateChildren()
     
     # Terminal node
-    if (node.isTerminal()):
-        return node.value
+    if (current_depth == depth_limit):
+        return heuristic_evaluation(node)
 
     # Maximizer node
     if node_type == MAX_NODE:
+        # update action history
+        
        return max(expectimax(child, CHANCE_NODE, heuristic_evaluation) for child in node.children)
 
     # Chance node
