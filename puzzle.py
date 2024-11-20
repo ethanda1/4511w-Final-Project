@@ -2,14 +2,20 @@ from tkinter import Frame, Label, CENTER
 import random
 import logic
 import constants as c
+from expectimax import ExpectimaxValue, expectimax, Node, MAX_NODE
+from heuristics import highest_score_heuristic
 
 def gen():
     return random.randint(0, c.GRID_LEN - 1)
 
 class GameGrid(Frame):
-    def __init__(self):
+    def __init__(self, heuristic=None, depth_limit=2):
         Frame.__init__(self)
 
+        # For expectimax
+        self.heuristic = heuristic
+        self.depth_limit = depth_limit
+        
         self.grid()
         self.master.title('2048')
         
@@ -86,6 +92,28 @@ class GameGrid(Frame):
         self.update_idletasks()
 
 
+    def get_heuristic_move(self):
+        root_node: Node = Node(value=0, children=[], state_matrix=self.matrix, action_history=[], action=None)
+        ret_val: ExpectimaxValue = expectimax(root_node, MAX_NODE, self.heuristic, 0, self.depth_limit)
+        
+        return ret_val.action_history[-1]
+    
+    def make_heuristic_move(self):
+        """Make a heuristic move and update the grid."""
+        move_key = self.get_heuristic_move()
+        self.matrix, done = self.commands[move_key](self.matrix)
+        if done:
+            self.matrix = logic.add_two(self.matrix)
+            # Record the last move
+            self.history_matrixs.append(self.matrix)
+            self.update_grid_cells()
+            if logic.game_state(self.matrix) == 'win':
+                self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                self.grid_cells[1][2].configure(text="Win!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+            if logic.game_state(self.matrix) == 'lose':
+                self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+                self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+    
     def get_random_move(self):
             """Return a random valid move from the available commands."""
             valid_moves = list(self.commands.keys())
@@ -109,7 +137,7 @@ class GameGrid(Frame):
 
     def auto_play(self):
         """Automatically make a move every 1 second."""
-        self.make_random_move()
+        self.make_heuristic_move()
         self.after(1000, self.auto_play)  
         
     # User input can be added back if needed
@@ -144,4 +172,4 @@ class GameGrid(Frame):
 
 
 if __name__ == "__main__":
-    game_grid = GameGrid()
+    game_grid = GameGrid(highest_score_heuristic)

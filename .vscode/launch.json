@@ -1,0 +1,13 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "2048_debug",
+        "type": "debugpy",
+        "request": "launch",
+        "program": "${workspaceFolder}/puzzle.py",
+        "console": "integratedTerminal"
+      }
+    ]
+  }
+  
