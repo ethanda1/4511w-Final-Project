@@ -31,7 +31,7 @@ class Node:
     
     def generateAllPossibleCpuMoves(self):
         positions = []  # List to store the positions of zeros
-        for row_idx, row in enumerate(self.state_matrix[0]):
+        for row_idx, row in enumerate(self.state_matrix):
             for col_idx, value in enumerate(row):
                 if value == 0:
                     positions.append((row_idx, col_idx))  # Add position as a tuple
@@ -49,13 +49,17 @@ class Node:
                 new_action_history.append(game_action)
                 
                 if game_action == c.KEY_UP:
-                    result_matrix = game_logic.up(self.state_matrix)        # result matrix is the matrix if the move is taken
+                    result_matrix = game_logic.up(self.state_matrix)[0]        # result matrix is the matrix if the move is taken
                 elif game_action == c.KEY_DOWN:
-                    result_matrix = game_logic.down(self.state_matrix)
+                    result_matrix = game_logic.down(self.state_matrix)[0]
                 elif game_action == c.KEY_RIGHT:
-                    result_matrix = game_logic.right(self.state_matrix)
+                    result_matrix = game_logic.right(self.state_matrix)[0]
                 elif game_action == c.KEY_LEFT:
-                    result_matrix = game_logic.left(self.state_matrix)
+                    result_matrix = game_logic.left(self.state_matrix)[0]
+                
+                # Taking this move results in same matrix, don't take it
+                if (result_matrix == self.state_matrix):
+                    continue
                 
                 evaluated_score = heuristic(result_matrix)
                 node = Node(evaluated_score, [], result_matrix, new_action_history, game_action)
@@ -93,14 +97,19 @@ def expectimax(node: Node, node_type:str, heuristic, current_depth: int, depth_l
         
         for child in node.children:
             ret_val: ExpectimaxValue = expectimax(child, CHANCE_NODE, heuristic, current_depth + 1, depth_limit)
-            if (ret_val.score >= max):
-                max = ret_val.score
+            if (ret_val.score >= max_score):
+                max_score = ret_val.score
                 best_action_history = ret_val.action_history
         return ExpectimaxValue(max_score, best_action_history)
         
 
     # Chance node
-    return sum(expectimax(child, MAX_NODE, heuristic, current_depth + 1, depth_limit) for child in node.children) / len(node.children)
+    sum = 0
+    for child in node.children:
+        ret_val: ExpectimaxValue = expectimax(child, MAX_NODE, heuristic, current_depth + 1, depth_limit)
+        sum += ret_val.score
+    average_sum = sum / len(node.children)
+    return ExpectimaxValue(average_sum, node.action_history)
 
 
 def printTree(node:Node):
