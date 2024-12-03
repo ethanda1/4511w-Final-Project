@@ -1,5 +1,14 @@
 from expectimax import Node
 import constants as c
+from expectimax import print2048Matrix
+import copy
+
+TEST_GRID = [
+    [2, 4, 8, 16],
+    [32, 64, 128, 256],
+    [512, 1024, 2048, 0],
+    [0, 0, 0, 0]
+]
 
 def test_heuristic():
     return None
@@ -27,6 +36,15 @@ def moveTilesDown(state_matrix):
     for row in range(0, c.GRID_LEN):
         for col in range(0, c.GRID_LEN):
             score += (row * 0.1) * state_matrix[row][col]
-            
-    
     return score
+
+def numberOfTilesInSameLocation(state_matrix):
+    '''score will go down as more tiles are in the same location, suggesting the game is stuck'''
+    ROW_LEN = len(state_matrix)
+    COL_LEN = len(state_matrix[0])
+    score = 0
+    copied_matrix = copy.deepcopy(state_matrix)
+    return 0
+
+if __name__ == "__main__":
+    numberOfTilesInSameLocation(TEST_GRID)

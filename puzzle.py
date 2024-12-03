@@ -153,7 +153,7 @@ class GameGrid(Frame):
             self.game_score = logic.calc_game_score(self.matrix)
             self.close_game()
             return
-        self.after(1, self.auto_play)  
+        self.after(0, self.auto_play)  
         
     # User input can be added back if needed
     def key_down(self, event):
