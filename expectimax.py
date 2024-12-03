@@ -23,10 +23,11 @@ class ExpectimaxValue:
         
 
 class Node:
-    def __init__(self, value=None, children=[], state_matrix=[], action_history=[], action=None):
+    def __init__(self, value=None, children=[], state_matrix=[], action_history=[], action=None, state_history_matrices=[]):
         self.value = value                   # value from heuristic
         self.children: List[Node] = children
         self.state_matrix = state_matrix
+        self.state_history_matrices = state_history_matrices
         self.action_history: List[str] = action_history
         self.action = action
         
@@ -66,15 +67,18 @@ class Node:
                 if (result_matrix == self.state_matrix):
                     continue
                 
-                evaluated_score = heuristic(result_matrix)
-                node = Node(evaluated_score, [], result_matrix, new_action_history, game_action)
+                if (not(self.state_history_matrices)):
+                    raise Exception("No state history")
+                    
+                evaluated_score = heuristic(result_matrix, self.state_history_matrices[-1])
+                node = Node(evaluated_score, [], result_matrix, new_action_history, game_action, self.state_history_matrices)
                 generated_children.append(node)
           
         # chance nodes children come from the possible actions the cpu could take, generate children from all open board positions
         else:
             open_positions = self.generateAllPossibleCpuMoves()
             for position in open_positions:
-                node = Node(value=0, children=[], state_matrix=self.state_matrix, action_history=self.action_history, action=position)
+                node = Node(value=0, children=[], state_matrix=self.state_matrix, action_history=self.action_history, action=position, state_history_matrices=self.state_history_matrices)
                 generated_children.append(node)
                 
         self.children.extend(generated_children)

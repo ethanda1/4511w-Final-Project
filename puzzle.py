@@ -3,13 +3,13 @@ import random
 import logic
 import constants as c
 from expectimax import ExpectimaxValue, expectimax, Node, MAX_NODE
-from heuristics import highest_score_heuristic, fewest_filled_tiles, moveTilesDown
+from heuristics import highest_score_heuristic, fewest_filled_tiles, moveTilesDown, numberOfTilesInSameLocation
 
 def gen():
     return random.randint(0, c.GRID_LEN - 1)
 
 class GameGrid(Frame):
-    def __init__(self, heuristic=None, depth_limit=2):
+    def __init__(self, heuristic=None, depth_limit=2, time_between_moves=0):
         Frame.__init__(self)
 
         # For expectimax
@@ -37,13 +37,14 @@ class GameGrid(Frame):
             c.KEY_RIGHT_ALT2: logic.right,
         }
 
+        self.time_between_moves = time_between_moves        # measured in ms
         self.grid_cells = []
         self.init_grid()
         self.matrix = logic.new_game(c.GRID_LEN)
-        self.history_matrixs = []
+        self.history_matrices = [self.matrix]
         self.update_grid_cells()
 
-        print(self.auto_play())
+        self.auto_play()
         self.mainloop()
 
     def init_grid(self):
@@ -93,7 +94,7 @@ class GameGrid(Frame):
 
 
     def get_heuristic_move(self):
-        root_node: Node = Node(value=0, children=[], state_matrix=self.matrix, action_history=[], action=None)
+        root_node: Node = Node(value=0, children=[], state_matrix=self.matrix, action_history=[], action=None, state_history_matrices=self.history_matrices)
         ret_val: ExpectimaxValue = expectimax(root_node, MAX_NODE, self.heuristic, 1, self.depth_limit)
         
         if (ret_val.action_history):
@@ -110,7 +111,7 @@ class GameGrid(Frame):
         if done:
             self.matrix = logic.add_two(self.matrix)
             # Record the last move
-            self.history_matrixs.append(self.matrix)
+            self.history_matrices.append(self.matrix)
             self.update_grid_cells()
             if logic.game_state(self.matrix) == 'win':
                 self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
@@ -132,7 +133,7 @@ class GameGrid(Frame):
         if done:
             self.matrix = logic.add_two(self.matrix)
             # Record the last move
-            self.history_matrixs.append(self.matrix)
+            self.history_matrices.append(self.matrix)
             self.update_grid_cells()
             if logic.game_state(self.matrix) == 'win':
                 self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
@@ -153,23 +154,23 @@ class GameGrid(Frame):
             self.game_score = logic.calc_game_score(self.matrix)
             self.close_game()
             return
-        self.after(0, self.auto_play)  
+        self.after(self.time_between_moves, self.auto_play)  
         
     # User input can be added back if needed
     def key_down(self, event):
         key = event.keysym
         print(event)
         if key == c.KEY_QUIT: exit()
-        if key == c.KEY_BACK and len(self.history_matrixs) > 1:
-            self.matrix = self.history_matrixs.pop()
+        if key == c.KEY_BACK and len(self.history_matrices) > 1:
+            self.matrix = self.history_matrices.pop()
             self.update_grid_cells()
-            print('back on step total step:', len(self.history_matrixs))
+            print('back on step total step:', len(self.history_matrices))
         elif key in self.commands:
             self.matrix, done = self.commands[key](self.matrix)
             if done:
                 self.matrix = logic.add_two(self.matrix)
                 # record last move
-                self.history_matrixs.append(self.matrix)
+                self.history_matrices.append(self.matrix)
                 self.update_grid_cells()
                 if logic.game_state(self.matrix) == 'win':
                     self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
@@ -187,5 +188,5 @@ class GameGrid(Frame):
 
 
 if __name__ == "__main__":
-    game_grid = GameGrid(fewest_filled_tiles)
+    game_grid = GameGrid(numberOfTilesInSameLocation, time_between_moves=0)
     print(game_grid.game_score)
