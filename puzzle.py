@@ -142,11 +142,16 @@ class GameGrid(Frame):
                 self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                 self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
+    def close_game(self):
+        print("Closing game.")
+        self.master.quit()
+        self.master.destroy()
 
     def auto_play(self):
         """Automatically make a move every 1 second."""
         if (not(self.make_heuristic_move() == "not over")):
             self.game_score = logic.calc_game_score(self.matrix)
+            self.close_game()
             return
         self.after(1, self.auto_play)  
         
