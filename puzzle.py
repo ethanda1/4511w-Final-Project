@@ -21,7 +21,7 @@ class GameGrid(Frame):
         
         # Needed for user input if we want it back
         # self.master.bind("<Key>", self.key_down)
-
+        self.game_score = 0
         self.commands = {
             c.KEY_UP: logic.up,
             c.KEY_DOWN: logic.down,
@@ -43,7 +43,7 @@ class GameGrid(Frame):
         self.history_matrixs = []
         self.update_grid_cells()
 
-        self.auto_play()
+        print(self.auto_play())
         self.mainloop()
 
     def init_grid(self):
@@ -96,11 +96,15 @@ class GameGrid(Frame):
         root_node: Node = Node(value=0, children=[], state_matrix=self.matrix, action_history=[], action=None)
         ret_val: ExpectimaxValue = expectimax(root_node, MAX_NODE, self.heuristic, 1, self.depth_limit)
         
-        return ret_val.action_history[-1]
+        if (ret_val.action_history):
+            return ret_val.action_history[-1]
+        return None
     
     def make_heuristic_move(self):
         """Make a heuristic move and update the grid."""
         move_key = self.get_heuristic_move()
+        if (not(move_key)):
+            print("move key is None")
         print(f'ACTUAL move taken: {move_key}')
         self.matrix, done = self.commands[move_key](self.matrix)
         if done:
@@ -114,6 +118,7 @@ class GameGrid(Frame):
             if logic.game_state(self.matrix) == 'lose':
                 self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                 self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+            return logic.game_state(self.matrix)
     
     def get_random_move(self):
             """Return a random valid move from the available commands."""
@@ -132,14 +137,18 @@ class GameGrid(Frame):
             if logic.game_state(self.matrix) == 'win':
                 self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                 self.grid_cells[1][2].configure(text="Win!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
+
             if logic.game_state(self.matrix) == 'lose':
                 self.grid_cells[1][1].configure(text="You", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
                 self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
+
     def auto_play(self):
         """Automatically make a move every 1 second."""
-        self.make_heuristic_move()
-        self.after(1000, self.auto_play)  
+        if (not(self.make_heuristic_move() == "not over")):
+            self.game_score = logic.calc_game_score(self.matrix)
+            return
+        self.after(1, self.auto_play)  
         
     # User input can be added back if needed
     def key_down(self, event):
@@ -173,4 +182,5 @@ class GameGrid(Frame):
 
 
 if __name__ == "__main__":
-    game_grid = GameGrid(moveTilesDown)
+    game_grid = GameGrid(fewest_filled_tiles)
+    print(game_grid.game_score)

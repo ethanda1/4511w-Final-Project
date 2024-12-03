@@ -195,3 +195,11 @@ def right(game):
     game = cover_up(game)[0]
     game = reverse(game)
     return game, done
+
+def calc_game_score(game):
+    '''Returns the score of the game where game is 2D list or a matrix'''
+    game_score = 0
+    for row in game:
+        for element in row:
+            game_score += element
+    return game_score
