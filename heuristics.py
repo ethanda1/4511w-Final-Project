@@ -54,8 +54,32 @@ def numberOfTilesInSameLocation(state_matrix, previous_state_matrix):
     for i in range(0, ROW_LEN):
         for k in range(0, COL_LEN):
             if (state_matrix[i][k] != previous_state_matrix[i][k]):
+                
                 score += 1
     return score
+
+def highTilesAlongSingleEdge(state_matrix, previous_state_matrix):
+    score = 0
+    print("needs to be implemented")
+    
+    
+    top_edge_score = 0
+    bottom_edge_score = 0
+    right_edge_score = 0
+    left_edge_score = 0
+    '''
+        loop through all edges
+            loop through element on a ledge
+        return max of each of the scores
+        
+    '''
+    
+    top_row = state_matrix[0]
+    bottom_row = state_matrix[-1]
+    
+    
+    
+    return max(max(top_edge_score, bottom_edge_score), max(right_edge_score, left_edge_score))
 
 if __name__ == "__main__":
     numberOfTilesInSameLocation(TEST_GRID)
