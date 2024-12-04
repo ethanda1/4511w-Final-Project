@@ -3,7 +3,7 @@ import random
 import logic
 import constants as c
 from expectimax import ExpectimaxValue, expectimax, Node, MAX_NODE
-from heuristics import highest_score_heuristic, fewest_filled_tiles, moveTilesDown, numberOfTilesInSameLocation
+from heuristics import highest_score_heuristic, fewest_filled_tiles, moveTilesDown, numberOfTilesInSameLocation, highTilesAlongSingleEdge
 
 def gen():
     return random.randint(0, c.GRID_LEN - 1)
@@ -188,5 +188,5 @@ class GameGrid(Frame):
 
 
 if __name__ == "__main__":
-    game_grid = GameGrid(numberOfTilesInSameLocation, time_between_moves=0)
+    game_grid = GameGrid(highTilesAlongSingleEdge, time_between_moves=0)
     print(game_grid.game_score)

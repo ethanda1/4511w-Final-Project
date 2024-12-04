@@ -45,8 +45,6 @@ class Node:
     def generateChildren(self, node_type: str, heuristic):
         generated_children = []
     
-        print("\nactual matrix")
-        print2048Matrix(self.state_matrix)
         # max nodes children come from the action taken, generate a child node for each movement action
         if node_type == MAX_NODE:
             for game_action in GAME_ACTIONS:
