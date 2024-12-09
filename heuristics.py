@@ -78,5 +78,31 @@ def highTilesAlongSingleEdge(state_matrix, previous_state_matrix):
     
     return score
 
+def monotonicity_heuristic(state_matrix, previous_state_matrix):
+    ROW_LEN = len(state_matrix)
+    COL_LEN = len(state_matrix[0])
+
+    # Calculates monotonicity for a single row or column
+    def calculate_monotonicity(line):
+        increasing = 0
+        decreasing = 0
+        for i in range(len(line) - 1):
+            if line[i] > line[i + 1]:
+                decreasing += line[i] - line[i + 1]
+            elif line[i] < line[i + 1]:
+                increasing += line[i + 1] - line[i]
+        return min(increasing, decreasing)
+
+    # Calculate monotonicity for rows
+    row_monotonicity = sum(calculate_monotonicity(row) for row in state_matrix)
+
+    # Calculate monotonicity for columns 
+    col_monotonicity = sum(calculate_monotonicity([state_matrix[row][col] for row in range(ROW_LEN)]) for col in range(COL_LEN))
+
+    score = row_monotonicity + col_monotonicity
+    
+    return score
+
+
 if __name__ == "__main__":
     numberOfTilesInSameLocation(TEST_GRID)
