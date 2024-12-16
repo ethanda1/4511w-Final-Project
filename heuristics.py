@@ -18,13 +18,37 @@ def test_heuristic():
 def highest_score_heuristic(state_matrix, previous_state_matrix):
     score = 0
     matrix = state_matrix        # 2048 game holds state_matrix in form (matrix, boolean)
-    print(matrix)
     for row in matrix:
         for element in row:
             score += element
     
     return score
-        
+
+# This was heuristic was completed with some ChatGPT code.
+def most_potential_tile_merges(state_matrix, previous_state_matrix):
+    score = 0
+
+    for row in range(0, c.GRID_LEN):
+        for col in range(0, c.GRID_LEN):
+            current_value = state_matrix[row][col]
+            
+            # Check left (i, col-1)
+            if col - 1 >= 0 and state_matrix[row][col - 1] == current_value:
+                score += 1
+            
+            # Check right (i, col+1)
+            if col + 1 < c.GRID_LEN and state_matrix[row][col + 1] == current_value:
+                score += 1
+            
+            # Check up (i-1, col)
+            if row - 1 >= 0 and state_matrix[row - 1][col] == current_value:
+                score += 1
+            
+            # Check down (i+1, col)
+            if row + 1 < c.GRID_LEN and state_matrix[row + 1][col] == current_value:
+                score += 1
+    return score
+
 def fewest_filled_tiles(state_matrix, previous_state_matrix):
     score = 0
     for row in state_matrix:

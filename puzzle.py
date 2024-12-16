@@ -106,7 +106,7 @@ class GameGrid(Frame):
         move_key = self.get_heuristic_move()
         if (not(move_key)):
             print("move key is None")
-        print(f'ACTUAL move taken: {move_key}')
+        # print(f'ACTUAL move taken: {move_key}')
         self.matrix, done = self.commands[move_key](self.matrix)
         if done:
             self.matrix = logic.add_two(self.matrix)
@@ -144,7 +144,7 @@ class GameGrid(Frame):
                 self.grid_cells[1][2].configure(text="Lose!", bg=c.BACKGROUND_COLOR_CELL_EMPTY)
 
     def close_game(self):
-        print("Closing game.")
+        # print("Closing game.")
         self.master.quit()
         self.master.destroy()
 
